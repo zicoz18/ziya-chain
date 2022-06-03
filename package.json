@@ -6,7 +6,7 @@
 	"scripts": {
 		"start": "ts-node index.ts",
 		"build": "tsc",
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"test": "jest --watchAll"
 	},
 	"repository": {
 		"type": "git",
@@ -20,8 +20,9 @@
 	},
 	"homepage": "https://github.com/zicoz18/ziya-chain#readme",
 	"devDependencies": {
-		"jest": "^23.6.0",
+		"@types/jest": "^28.1.0",
 		"nodemon": "^2.0.16",
+		"ts-jest": "^28.0.4",
 		"ts-node": "^10.8.1",
 		"typescript": "^4.7.3"
 	}

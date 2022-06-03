@@ -5,6 +5,7 @@ class Block {
 	public lastHash: any;
 	public hash: any;
 	public data: any;
+
 	constructor({ timestamp, lastHash, hash, data }: any) {
 		this.timestamp = timestamp;
 		this.lastHash = lastHash;
@@ -14,6 +15,14 @@ class Block {
 
 	public static genesis(): any {
 		return new Block(GENESIS_DATA);
+	}
+
+	public static mineBlock({ lastBlock, data }: any): any {
+		const timestamp = Date.now();
+		const lastHash = lastBlock.hash;
+		const hash = "hash";
+
+		return new Block({ timestamp, lastHash, hash, data });
 	}
 }
 

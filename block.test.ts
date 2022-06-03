@@ -1,5 +1,5 @@
 import Block from "./block";
-import GENESIS_DATA from "./config";
+import { GENESIS_DATA } from "./config";
 
 describe("Block", () => {
 	const timestamp = "a-date";
@@ -25,5 +25,5 @@ describe("Block", () => {
 		it("returns the genesis data", () => {
 			expect(genesisBlock).toEqual(GENESIS_DATA);
 		});
-	}
+	});
 });

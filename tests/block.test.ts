@@ -1,6 +1,6 @@
-import Block from "./block";
-import { GENESIS_DATA } from "./config";
-import cryptoHash from "./crypto-hash";
+import Block from "../models/block";
+import { GENESIS_DATA } from "../config";
+import cryptoHash from "../utils/crypto-hash";
 
 describe("Block", () => {
 	const timestamp = "a-date";

@@ -1,5 +1,5 @@
-import { GENESIS_DATA } from "./config";
-import cryptoHash from "./crypto-hash";
+import { GENESIS_DATA } from "../config";
+import cryptoHash from "../utils/crypto-hash";
 
 class Block {
 	public timestamp: any;

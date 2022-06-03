@@ -1,0 +1,28 @@
+{
+	"name": "ziya-chain",
+	"version": "1.0.0",
+	"description": "PoW based blockchain from scratch using TypeScript",
+	"main": "index.js",
+	"scripts": {
+		"start": "ts-node index.ts",
+		"build": "tsc",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/zicoz18/ziya-chain.git"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/zicoz18/ziya-chain/issues"
+	},
+	"homepage": "https://github.com/zicoz18/ziya-chain#readme",
+	"devDependencies": {
+		"jest": "^23.6.0",
+		"nodemon": "^2.0.16",
+		"ts-node": "^10.8.1",
+		"typescript": "^4.7.3"
+	}
+}

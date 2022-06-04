@@ -2,13 +2,13 @@ import Block from "./block";
 import cryptoHash from "../utils/crypto-hash";
 
 class Blockchain {
-	public chain: any[];
+	public chain: Block[];
 
 	constructor() {
 		this.chain = [Block.genesis()];
 	}
 
-	addBlock({ data }: any) {
+	addBlock({ data }: any): void {
 		const newBlock = Block.mineBlock({
 			lastBlock: this.chain[this.chain.length - 1],
 			data,
@@ -17,7 +17,7 @@ class Blockchain {
 		this.chain.push(newBlock);
 	}
 
-	public static isValidChain(chain: any[]) {
+	public static isValidChain(chain: Block[]): boolean {
 		if (JSON.stringify(chain[0]) !== JSON.stringify(Block.genesis()))
 			return false;
 
@@ -44,7 +44,7 @@ class Blockchain {
 		return true;
 	}
 
-	replaceChain(chain: any) {
+	replaceChain(chain: Block[]): void | boolean {
 		if (chain.length <= this.chain.length) {
 			console.error("The incoming chain must be longer");
 			return false;

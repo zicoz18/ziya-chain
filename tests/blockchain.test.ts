@@ -30,7 +30,14 @@ describe("Blockchain", () => {
 	describe("isValidaChain()", () => {
 		describe("when the chain does not start with the genesis block", () => {
 			it("returns false", () => {
-				blockchain.chain[0] = { data: "fake-genesis" };
+				blockchain.chain[0] = new Block({
+					timestamp: 1,
+					lastHash: "foo",
+					hash: "bar",
+					nonce: 0,
+					difficulty: 3,
+					data: [],
+				});
 
 				expect(Blockchain.isValidChain(blockchain.chain)).toBe(false);
 			});
@@ -101,7 +108,14 @@ describe("Blockchain", () => {
 
 		describe("when the new chain is not longer", () => {
 			beforeEach(() => {
-				newChain.chain[0] = { new: "chain" };
+				newChain.chain[0] = new Block({
+					timestamp: 1,
+					lastHash: "foo",
+					hash: "bar",
+					nonce: 0,
+					difficulty: 3,
+					data: [],
+				});
 				blockchain.replaceChain(newChain.chain);
 			});
 

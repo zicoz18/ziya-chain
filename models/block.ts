@@ -3,14 +3,14 @@ import cryptoHash from "../utils/crypto-hash";
 import hexToBinary from "../utils/hex-to-binary";
 
 class Block {
-	public timestamp: any;
-	public lastHash: any;
-	public hash: any;
+	public timestamp: number;
+	public lastHash: string;
+	public hash: string;
 	public data: any;
-	public nonce: any;
-	public difficulty: any;
+	public nonce: number;
+	public difficulty: number;
 
-	constructor({ timestamp, lastHash, hash, data, nonce, difficulty }: any) {
+	constructor({ timestamp, lastHash, hash, data, nonce, difficulty }: Block) {
 		this.timestamp = timestamp;
 		this.lastHash = lastHash;
 		this.hash = hash;
@@ -19,11 +19,12 @@ class Block {
 		this.difficulty = difficulty;
 	}
 
-	public static genesis(): any {
+	public static genesis(): Block {
 		return new Block(GENESIS_DATA);
 	}
 
-	public static mineBlock({ lastBlock, data }: any): any {
+	// Improve input types
+	public static mineBlock({ lastBlock, data }: any): Block {
 		const lastHash = lastBlock.hash;
 		let hash, timestamp;
 		let nonce = 0;
@@ -44,7 +45,8 @@ class Block {
 		return new Block({ timestamp, lastHash, hash, difficulty, nonce, data });
 	}
 
-	public static adjustDifficulty({ originalBlock, timestamp }: any) {
+	// Improve input types
+	public static adjustDifficulty({ originalBlock, timestamp }: any): number {
 		const { difficulty } = originalBlock;
 
 		if (difficulty < 1) return 1;

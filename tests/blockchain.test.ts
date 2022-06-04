@@ -23,7 +23,7 @@ describe("Blockchain", () => {
 		expect(blockchain.chain[blockchain.chain.length - 1].data).toEqual(newData);
 	});
 
-	it("isValidaChain()", () => {
+	describe("isValidaChain()", () => {
 		describe("when the chain does not start with the genesis block", () => {
 			it("returns false", () => {
 				blockchain.chain[0] = { data: "fake-genesis" };

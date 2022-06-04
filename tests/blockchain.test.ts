@@ -1,5 +1,6 @@
 import Blockchain from "../models/blockchain";
 import Block from "../models/block";
+import cryptoHash from "../utils/crypto-hash";
 
 describe("Blockchain", () => {
 	let blockchain: Blockchain, newChain: Blockchain, originalChain: Block[];
@@ -59,6 +60,29 @@ describe("Blockchain", () => {
 			describe("and the chain does not contain any invalid blocks", () => {
 				it("returns true", () => {
 					expect(Blockchain.isValidChain(blockchain.chain)).toBe(true);
+				});
+			});
+
+			describe("and the chain	contains a block with a jumped difficulty", () => {
+				it("returns false", () => {
+					const lastBlock = blockchain.chain[blockchain.chain.length - 1];
+					const lastHash = lastBlock.hash;
+					const timestamp = Date.now();
+					const nonce = 0;
+					const data: any[] = [];
+					const difficulty = lastBlock.difficulty - 3;
+					const hash = cryptoHash(timestamp, lastHash, nonce, difficulty, data);
+					const badBlock = new Block({
+						timestamp,
+						lastHash,
+						hash,
+						nonce,
+						difficulty,
+						data,
+					});
+
+					blockchain.chain.push(badBlock);
+					expect(Blockchain.isValidChain(blockchain.chain)).toBe(false);
 				});
 			});
 		});

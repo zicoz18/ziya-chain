@@ -1,21 +1,29 @@
 import express from "express";
 import bodyParser from "body-parser";
 import Blockchain from "./models/blockchain";
+import PubSub from "./models/pubsub";
 
-const app = express();
-app.use(bodyParser.json());
-const blockchain = new Blockchain();
+const main = async () => {
+	const app = express();
+	app.use(bodyParser.json());
+	const blockchain = new Blockchain();
+	const pubsub = await PubSub.create({ blockchain });
 
-app.get("/api/blocks", (req, res) => {
-	res.json(blockchain.chain);
-});
+	pubsub.broadcastChain();
 
-app.post("/api/mine", (req, res) => {
-	const { data } = req.body;
+	app.get("/api/blocks", (req, res) => {
+		res.json(blockchain.chain);
+	});
 
-	blockchain.addBlock({ data });
-	res.redirect("api/blocks");
-});
+	app.post("/api/mine", (req, res) => {
+		const { data } = req.body;
 
-const PORT = 3000;
-app.listen(PORT, () => console.log(`Listening at localhost:${PORT}`));
+		blockchain.addBlock({ data });
+		res.redirect("api/blocks");
+	});
+
+	const PORT = 3000;
+	app.listen(PORT, () => console.log(`Listening at localhost:${PORT}`));
+};
+
+main();

@@ -58,10 +58,11 @@ describe("Wallet", () => {
 			let transaction: Transaction, amount: number, recipient: string;
 
 			beforeEach(() => {
-				amount: 50;
-				recipient: "foo-recipient";
+				amount = 50;
+				recipient = "foo-recipient";
 				transaction = wallet.createTransaction({ amount, recipient });
 			});
+
 			it("creates an instance of `Transaction`", () => {
 				expect(transaction instanceof Transaction).toBe(true);
 			});

@@ -49,7 +49,7 @@ class Transaction {
 		amount,
 	}: CreateTransactionAttributes): OutputMap {
 		const outputMap: OutputMap = {};
-		outputMap[recipient] = amount;
+		outputMap[recipient] = parseInt(<string>(<unknown>amount));
 		outputMap[senderWallet.publicKey] = senderWallet.balance - amount;
 		return outputMap;
 	}
@@ -73,9 +73,10 @@ class Transaction {
 		}
 
 		if (!this.outputMap[recipient]) {
-			this.outputMap[recipient] = amount;
+			this.outputMap[recipient] = parseInt(<string>(<unknown>amount));
 		} else {
-			this.outputMap[recipient] = this.outputMap[recipient] + amount;
+			this.outputMap[recipient] =
+				this.outputMap[recipient] + parseInt(<string>(<unknown>amount));
 		}
 
 		this.outputMap[senderWallet.publicKey] =

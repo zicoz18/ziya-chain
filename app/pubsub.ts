@@ -1,6 +1,6 @@
 import { RedisClientType } from "@redis/client";
 import { createClient } from "redis";
-import Blockchain from "./blockchain";
+import Blockchain from "../blockchain";
 
 const CHANNELS = {
 	TEST: "TEST",

@@ -1,6 +1,6 @@
-import Blockchain from "../models/blockchain";
-import Block from "../models/block";
-import cryptoHash from "../utils/crypto-hash";
+import Blockchain from "../../blockchain";
+import Block from "../../blockchain/block";
+import cryptoHash from "../../utils/crypto-hash";
 
 describe("Blockchain", () => {
 	let blockchain: Blockchain, newChain: Blockchain, originalChain: Block[];

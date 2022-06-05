@@ -1,7 +1,7 @@
-import Block from "../models/block";
-import { GENESIS_DATA, MINE_RATE } from "../config";
-import cryptoHash from "../utils/crypto-hash";
-import hexToBinary from "../utils/hex-to-binary";
+import Block from "../../blockchain/block";
+import { GENESIS_DATA, MINE_RATE } from "../../config";
+import cryptoHash from "../../utils/crypto-hash";
+import hexToBinary from "../../utils/hex-to-binary";
 
 describe("Block", () => {
 	const timestamp = 2000;

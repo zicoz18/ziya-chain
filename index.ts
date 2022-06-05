@@ -1,8 +1,8 @@
 import express from "express";
 import bodyParser from "body-parser";
 import axios from "axios";
-import Blockchain from "./models/blockchain";
-import PubSub from "./models/pubsub";
+import Blockchain from "./blockchain";
+import PubSub from "./app/pubsub";
 
 const main = async () => {
 	const app = express();

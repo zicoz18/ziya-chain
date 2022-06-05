@@ -1,5 +1,6 @@
 import { STARTING_BALANCE } from "../config";
 import { ec, cryptoHash } from "../utils";
+import Transaction from "./transaction";
 
 class Wallet {
 	public balance: number;
@@ -16,6 +17,14 @@ class Wallet {
 
 	sign(data: any) {
 		return this.keyPair.sign(cryptoHash(data));
+	}
+
+	createTransaction({ amount, recipient }: any): Transaction {
+		if (amount > this.balance) {
+			throw new Error("Amount exceeds balance");
+		}
+
+		return new Transaction({ senderWallet: this, recipient, amount });
 	}
 }
 

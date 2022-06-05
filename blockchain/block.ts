@@ -2,6 +2,16 @@ import { GENESIS_DATA, MINE_RATE } from "../config";
 import { cryptoHash } from "../utils";
 import hexToBinary from "../utils/hex-to-binary";
 
+interface MineBlockAttributes {
+	lastBlock: Block;
+	data: any;
+}
+
+interface AdjustDifficultyAttributes {
+	originalBlock: Block;
+	timestamp: number;
+}
+
 class Block {
 	public timestamp: number;
 	public lastHash: string;
@@ -24,7 +34,7 @@ class Block {
 	}
 
 	// Improve input types
-	public static mineBlock({ lastBlock, data }: any): Block {
+	public static mineBlock({ lastBlock, data }: MineBlockAttributes): Block {
 		const lastHash = lastBlock.hash;
 		let hash, timestamp;
 		let nonce = 0;
@@ -46,7 +56,10 @@ class Block {
 	}
 
 	// Improve input types
-	public static adjustDifficulty({ originalBlock, timestamp }: any): number {
+	public static adjustDifficulty({
+		originalBlock,
+		timestamp,
+	}: AdjustDifficultyAttributes): number {
 		const { difficulty } = originalBlock;
 
 		if (difficulty < 1) return 1;

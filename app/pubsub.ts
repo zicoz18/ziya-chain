@@ -2,6 +2,11 @@ import { RedisClientType } from "@redis/client";
 import { createClient } from "redis";
 import Blockchain from "../blockchain";
 
+interface PublishAttributes {
+	channel: string;
+	message: string;
+}
+
 const CHANNELS = {
 	TEST: "TEST",
 	BLOCKCHAIN: "BLOCKCHAIN",
@@ -29,12 +34,12 @@ class PubSub {
 		this.subscribeToChannels();
 	}
 
-	async connect() {
+	async connect(): Promise<void> {
 		await this.publisher.connect();
 		await this.subscriber.connect();
 	}
 
-	handleMessage(message: any, channel: any) {
+	handleMessage(message: string, channel: string): void {
 		console.log(`Message received. Channel: ${channel}. Message: ${message}`);
 		const parsedMessage = JSON.parse(message);
 		// console.log("blockchain bb: ", this.blockchain);
@@ -48,7 +53,7 @@ class PubSub {
 		}
 	}
 
-	subscribeToChannels() {
+	subscribeToChannels(): void {
 		Object.values(CHANNELS).forEach((channel) => {
 			// Different version of redis might have to change
 			this.subscriber.subscribe(channel, (message: any, channel: any) =>
@@ -57,11 +62,11 @@ class PubSub {
 		});
 	}
 
-	publish({ channel, message }: any) {
+	publish({ channel, message }: PublishAttributes): void {
 		this.publisher.publish(channel, message);
 	}
 
-	broadcastChain() {
+	broadcastChain(): void {
 		this.publish({
 			channel: CHANNELS.BLOCKCHAIN,
 			message: JSON.stringify(this.blockchain.chain),

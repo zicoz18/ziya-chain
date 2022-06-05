@@ -3,11 +3,15 @@ import bodyParser from "body-parser";
 import axios from "axios";
 import Blockchain from "./blockchain";
 import PubSub from "./app/pubsub";
+import TransactionPool from "./wallet/transaction-pool";
+import Wallet from "./wallet";
 
 const main = async () => {
 	const app = express();
 	app.use(bodyParser.json());
 	const blockchain = new Blockchain();
+	const transactionPool = new TransactionPool();
+	const wallet = new Wallet();
 	const pubsub = await PubSub.create({ blockchain });
 
 	const DEFAULT_PORT = 3000;
@@ -23,6 +27,30 @@ const main = async () => {
 		blockchain.addBlock({ data });
 		pubsub.broadcastChain();
 		res.redirect("api/blocks");
+	});
+
+	app.post("/api/transact", (req, res) => {
+		const { amount, recipient }: { amount: number; recipient: string } =
+			req.body;
+
+		let transaction = transactionPool.existingTransaction({
+			inputAddress: wallet.publicKey,
+		});
+
+		try {
+			if (transaction) {
+				transaction.update({ senderWallet: wallet, recipient, amount });
+			} else {
+				transaction = wallet.createTransaction({ amount, recipient });
+			}
+		} catch (error: any) {
+			return res.status(400).json({ type: "error", message: error.message });
+		}
+
+		transactionPool.setTransaction(transaction);
+
+		console.log("transactionPool: ", transactionPool);
+		res.json({ type: "success", transaction });
 	});
 
 	const syncChains = async () => {

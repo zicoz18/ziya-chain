@@ -1,4 +1,4 @@
-import Transaction from "";
+import Transaction from "../../wallet/transaction";
 import Wallet from "../../wallet";
 
 describe("Transaction", () => {

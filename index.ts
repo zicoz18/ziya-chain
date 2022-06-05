@@ -13,8 +13,6 @@ const main = async () => {
 	const DEFAULT_PORT = 3000;
 	const ROOT_NODE_ADDRESS = `http://localhost:${DEFAULT_PORT}/api/blocks`;
 
-	pubsub.broadcastChain();
-
 	app.get("/api/blocks", (req, res) => {
 		res.json(blockchain.chain);
 	});
@@ -49,7 +47,9 @@ const main = async () => {
 
 	const PORT = PEER_PORT || DEFAULT_PORT;
 	app.listen(PORT, () => console.log(`Listening at localhost:${PORT}`));
-	await syncChains();
+	if (PORT !== DEFAULT_PORT) {
+		await syncChains();
+	}
 };
 
 main();

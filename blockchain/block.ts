@@ -1,5 +1,5 @@
 import { GENESIS_DATA, MINE_RATE } from "../config";
-import cryptoHash from "../utils/crypto-hash";
+import { cryptoHash } from "../utils";
 import hexToBinary from "../utils/hex-to-binary";
 
 class Block {

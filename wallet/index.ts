@@ -1,6 +1,5 @@
 import { STARTING_BALANCE } from "../config";
-import { ec } from "../utils";
-import cryptoHash from "../utils/crypto-hash";
+import { ec, cryptoHash } from "../utils";
 
 class Wallet {
 	public balance: number;

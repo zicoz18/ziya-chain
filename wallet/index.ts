@@ -18,7 +18,7 @@ class Wallet {
 		this.publicKey = this.keyPair.getPublic().encode("hex", true);
 	}
 
-	sign(data: any) {
+	sign(data: any): EC.Signature {
 		return this.keyPair.sign(cryptoHash(data));
 	}
 

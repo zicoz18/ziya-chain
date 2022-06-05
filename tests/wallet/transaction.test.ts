@@ -93,4 +93,46 @@ describe("Transaction", () => {
 			});
 		});
 	});
+
+	describe("update()", () => {
+		let originalSignature: any,
+			originalSenderOutput: any,
+			nextRecipient: any,
+			nextAmount: any;
+
+		beforeEach(() => {
+			originalSignature = transaction.input.signature;
+			originalSenderOutput = transaction.outputMap[senderWallet.publicKey];
+			nextRecipient = "next-recipient";
+			nextAmount = 50;
+
+			transaction.update({
+				senderWallet,
+				recipient: nextRecipient,
+				amount: nextAmount,
+			});
+		});
+
+		it("outputs the `amount` to the recipient", () => {
+			expect(transaction.outputMap[nextRecipient]).toEqual(nextAmount);
+		});
+
+		it("subtracs the amount from the original sender output amount", () => {
+			expect(transaction.outputMap[senderWallet.publicKey]).toEqual(
+				originalSenderOutput - nextAmount
+			);
+		});
+
+		it("maintains a total output that matches the input amount", () => {
+			expect(
+				Object.values(transaction.outputMap).reduce(
+					(total: any, outputAmount: any) => total + outputAmount
+				)
+			).toEqual(transaction.input.amount);
+		});
+
+		it("re-signs the transaction", () => {
+			expect(transaction.input.signature).not.toEqual(originalSignature);
+		});
+	});
 });

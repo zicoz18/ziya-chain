@@ -8,7 +8,7 @@ const CHANNELS = {
 };
 
 // Should not use new Pubsub() to create a new instance
-// Have to use awiat PubSub.create() to create a new instance because we use async code inside constructor
+// Have to use await PubSub.create() to create a new instance because we use async code inside constructor
 class PubSub {
 	public blockchain: Blockchain;
 	public publisher: RedisClientType;

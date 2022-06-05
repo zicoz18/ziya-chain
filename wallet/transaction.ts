@@ -1,28 +1,60 @@
 import { v1 as uuid } from "uuid";
+import { ec as EC } from "elliptic";
+import Wallet from ".";
 import { verifySignature } from "../utils";
 
-class Transaction {
-	public id: any;
-	public senderWallet: any;
-	public recipient: any;
-	public amount: any;
-	public outputMap: any;
-	public input: any;
+interface CreateTransactionAttributes {
+	senderWallet: Wallet;
+	amount: number;
+	recipient: string;
+}
 
-	constructor({ senderWallet, recipient, amount }: any) {
+interface OutputMap {
+	[address: string]: number;
+}
+
+interface CreateInputAttributes {
+	senderWallet: Wallet;
+	outputMap: OutputMap;
+}
+
+interface Input {
+	timestamp: number;
+	amount: number;
+	address: string;
+	signature: EC.Signature;
+}
+
+class Transaction {
+	public id: string;
+	public senderWallet?: Wallet;
+	public recipient?: string;
+	public amount?: number;
+	public outputMap: OutputMap;
+	public input: Input;
+
+	constructor({
+		senderWallet,
+		recipient,
+		amount,
+	}: CreateTransactionAttributes) {
 		this.id = uuid();
 		this.outputMap = this.createOutputMap({ senderWallet, recipient, amount });
 		this.input = this.createInput({ senderWallet, outputMap: this.outputMap });
 	}
 
-	createOutputMap({ senderWallet, recipient, amount }: any) {
-		const outputMap: any = {};
+	createOutputMap({
+		senderWallet,
+		recipient,
+		amount,
+	}: CreateTransactionAttributes): OutputMap {
+		const outputMap: OutputMap = {};
 		outputMap[recipient] = amount;
 		outputMap[senderWallet.publicKey] = senderWallet.balance - amount;
 		return outputMap;
 	}
 
-	createInput({ senderWallet, outputMap }: any) {
+	createInput({ senderWallet, outputMap }: CreateInputAttributes): Input {
 		return {
 			timestamp: Date.now(),
 			amount: senderWallet.balance,
@@ -31,7 +63,11 @@ class Transaction {
 		};
 	}
 
-	update({ senderWallet, recipient, amount }: any) {
+	update({
+		senderWallet,
+		recipient,
+		amount,
+	}: CreateTransactionAttributes): void {
 		if (amount > this.outputMap[senderWallet.publicKey]) {
 			throw new Error("Amount exceeds balance");
 		}
@@ -48,7 +84,7 @@ class Transaction {
 		this.input = this.createInput({ senderWallet, outputMap: this.outputMap });
 	}
 
-	public static validTransaction(transaction: Transaction) {
+	public static validTransaction(transaction: Transaction): boolean {
 		const {
 			input: { address, amount, signature },
 			outputMap,

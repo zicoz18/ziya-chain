@@ -1,7 +1,13 @@
 import { RedisClientType } from "@redis/client";
 import { createClient } from "redis";
 import Blockchain from "../blockchain";
+import Transaction from "../wallet/transaction";
+import TransactionPool from "../wallet/transaction-pool";
 
+interface CreatePubSubAttributes {
+	blockchain: Blockchain;
+	transactionPool: TransactionPool;
+}
 interface PublishAttributes {
 	channel: string;
 	message: string;
@@ -10,24 +16,30 @@ interface PublishAttributes {
 const CHANNELS = {
 	TEST: "TEST",
 	BLOCKCHAIN: "BLOCKCHAIN",
+	TRANSACTION: "TRANSACTION",
 };
 
 // Should not use new Pubsub() to create a new instance
 // Have to use await PubSub.create() to create a new instance because we use async code inside constructor
 class PubSub {
 	public blockchain: Blockchain;
+	public transactionPool: TransactionPool;
 	public publisher: RedisClientType;
 	public subscriber: RedisClientType;
 
 	// Custom constructor because we have to use async code inside contrustor
-	public static async create({ blockchain }: any): Promise<PubSub> {
-		const pubSub = new PubSub({ blockchain });
+	public static async create({
+		blockchain,
+		transactionPool,
+	}: CreatePubSubAttributes): Promise<PubSub> {
+		const pubSub = new PubSub({ blockchain, transactionPool });
 		await pubSub.connect();
 		return pubSub;
 	}
 
-	constructor({ blockchain }: any) {
+	constructor({ blockchain, transactionPool }: CreatePubSubAttributes) {
 		this.blockchain = blockchain;
+		this.transactionPool = transactionPool;
 		this.publisher = createClient();
 		this.subscriber = createClient();
 
@@ -42,14 +54,16 @@ class PubSub {
 	handleMessage(message: string, channel: string): void {
 		console.log(`Message received. Channel: ${channel}. Message: ${message}`);
 		const parsedMessage = JSON.parse(message);
-		// console.log("blockchain bb: ", this.blockchain);
 
 		switch (channel) {
 			case CHANNELS.BLOCKCHAIN:
 				this.blockchain.replaceChain(parsedMessage);
 				break;
-			default:
+			case CHANNELS.TRANSACTION:
+				this.transactionPool.setTransaction(parsedMessage);
 				break;
+			default:
+				return;
 		}
 	}
 
@@ -70,6 +84,13 @@ class PubSub {
 		this.publish({
 			channel: CHANNELS.BLOCKCHAIN,
 			message: JSON.stringify(this.blockchain.chain),
+		});
+	}
+
+	broadcastTransaction(transaction: Transaction): void {
+		this.publish({
+			channel: CHANNELS.TRANSACTION,
+			message: JSON.stringify(transaction),
 		});
 	}
 }

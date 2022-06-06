@@ -5,6 +5,7 @@ import Blockchain from "./blockchain";
 import PubSub from "./app/pubsub";
 import TransactionPool from "./wallet/transaction-pool";
 import Wallet from "./wallet";
+import Transaction from "./wallet/transaction";
 
 const main = async () => {
 	const app = express();
@@ -12,7 +13,7 @@ const main = async () => {
 	const blockchain = new Blockchain();
 	const transactionPool = new TransactionPool();
 	const wallet = new Wallet();
-	const pubsub = await PubSub.create({ blockchain });
+	const pubsub = await PubSub.create({ blockchain, transactionPool });
 
 	const DEFAULT_PORT = 3000;
 	const ROOT_NODE_ADDRESS = `http://localhost:${DEFAULT_PORT}/api/blocks`;
@@ -36,10 +37,22 @@ const main = async () => {
 		let transaction = transactionPool.existingTransaction({
 			inputAddress: wallet.publicKey,
 		});
+		console.log("found transaction: ", transaction);
 
 		try {
 			if (transaction) {
-				transaction.update({ senderWallet: wallet, recipient, amount });
+				console.log("type of transaction: ", typeof transaction);
+				console.log(
+					"instance of transaction? ",
+					transaction instanceof Transaction
+				);
+
+				// Returned value is not Transaction it is an Object which causes error
+				transaction.update({
+					senderWallet: wallet,
+					recipient,
+					amount,
+				});
 			} else {
 				transaction = wallet.createTransaction({ amount, recipient });
 			}
@@ -48,6 +61,8 @@ const main = async () => {
 		}
 
 		transactionPool.setTransaction(transaction);
+
+		pubsub.broadcastTransaction(transaction);
 
 		res.json({ type: "success", transaction });
 	});

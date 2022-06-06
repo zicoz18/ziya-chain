@@ -1,13 +1,18 @@
 import Transaction from "./transaction";
 
+interface TransactionMap {
+	[key: string]: Transaction;
+}
+
 class TransactionPool {
-	public transactionMap: any;
+	public transactionMap: TransactionMap;
 
 	constructor() {
 		this.transactionMap = {};
 	}
 
 	setTransaction(transaction: Transaction): void {
+		console.log("adding transaction: ", transaction);
 		this.transactionMap[transaction.id] = transaction;
 	}
 
@@ -17,6 +22,7 @@ class TransactionPool {
 		inputAddress: string;
 	}): Transaction | undefined {
 		const transactions: Transaction[] = Object.values(this.transactionMap);
+		console.log("existingTransaction: ", transactions);
 		return transactions.find(
 			(transaction: Transaction) => transaction.input.address === inputAddress
 		);

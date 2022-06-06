@@ -5,7 +5,7 @@
 	"main": "index.js",
 	"scripts": {
 		"start": "ts-node index.ts",
-		"dev": "npm run start-redis && nodemon index.ts",
+		"dev": "npm run start-redis && ts-node index.ts",
 		"dev-peer": "ts-node index.ts true",
 		"start-redis": "redis-server --daemonize yes",
 		"pubsub": "ts-node pubsub.ts",

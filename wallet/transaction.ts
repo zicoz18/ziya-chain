@@ -3,11 +3,20 @@ import { ec as EC } from "elliptic";
 import Wallet from ".";
 import { verifySignature } from "../utils";
 
-interface CreateTransactionAttributes {
+interface ConstructorParamsWithSenderWallet {
 	senderWallet: Wallet;
 	amount: number;
 	recipient: string;
 }
+
+interface ConstructorParamsWithoutSenderWallet {
+	id: string;
+	outputMap: OutputMap;
+	input: Input;
+}
+
+type ConstructorParams = ConstructorParamsWithoutSenderWallet &
+	ConstructorParamsWithSenderWallet;
 
 interface OutputMap {
 	[address: string]: number;
@@ -34,17 +43,38 @@ class Transaction {
 		senderWallet,
 		recipient,
 		amount,
-	}: CreateTransactionAttributes) {
-		this.id = uuid();
-		this.outputMap = this.createOutputMap({ senderWallet, recipient, amount });
-		this.input = this.createInput({ senderWallet, outputMap: this.outputMap });
+		id,
+		outputMap,
+		input,
+	}: Partial<ConstructorParams>) {
+		if (senderWallet && recipient && amount) {
+			this.id = uuid();
+			this.outputMap = this.createOutputMap({
+				senderWallet,
+				recipient,
+				amount,
+			});
+			this.input = this.createInput({
+				senderWallet,
+				outputMap: this.outputMap,
+			});
+		} else {
+			this.id = <string>id;
+			this.outputMap = outputMap ?? {};
+			this.input = <Input>input ?? {
+				timestamp: 0,
+				amount: 0,
+				address: "",
+				signature: "",
+			};
+		}
 	}
 
 	createOutputMap({
 		senderWallet,
 		recipient,
 		amount,
-	}: CreateTransactionAttributes): OutputMap {
+	}: ConstructorParamsWithSenderWallet): OutputMap {
 		const outputMap: OutputMap = {};
 		outputMap[recipient] = parseInt(<string>(<unknown>amount));
 		outputMap[senderWallet.publicKey] = senderWallet.balance - amount;
@@ -64,7 +94,7 @@ class Transaction {
 		senderWallet,
 		recipient,
 		amount,
-	}: CreateTransactionAttributes): void {
+	}: ConstructorParamsWithSenderWallet): void {
 		if (amount > this.outputMap[senderWallet.publicKey]) {
 			throw new Error("Amount exceeds balance");
 		}

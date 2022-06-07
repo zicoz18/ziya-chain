@@ -15,6 +15,10 @@ class TransactionPool {
 		this.transactionMap[transaction.id] = transaction;
 	}
 
+	setMap(transactionMap: TransactionMap): void {
+		this.transactionMap = transactionMap;
+	}
+
 	existingTransaction({
 		inputAddress,
 	}: {

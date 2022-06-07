@@ -27,9 +27,6 @@ interface Input {
 
 class Transaction {
 	public id: string;
-	public senderWallet?: Wallet;
-	public recipient?: string;
-	public amount?: number;
 	public outputMap: OutputMap;
 	public input: Input;
 

@@ -55,22 +55,19 @@ class PubSub {
 
 	handleMessage(message: string, channel: string): void {
 		console.log(`Message received. Channel: ${channel}. Message: ${message}`);
+		const parsedMessage = JSON.parse(message);
 
 		switch (channel) {
 			case CHANNELS.BLOCKCHAIN:
-				const parsedMessage = JSON.parse(message);
 				this.blockchain.replaceChain(parsedMessage);
 				break;
 			case CHANNELS.TRANSACTION:
-				const parsedTransaction = plainToInstance(
-					Transaction,
-					JSON.parse(message)
-				);
-				console.log("parsed Transaction: ", parsedTransaction);
-				this.transactionPool.setTransaction(parsedTransaction[0]);
-				// const transaction = plainToInstance(Transaction, message);
-				// console.log("recieved transaction object: ", transaction);
-				// this.transactionPool.setTransaction(transaction);
+				const newlyCreatedTransaction = new Transaction({
+					id: parsedMessage.id,
+					outputMap: parsedMessage.outputMap,
+					input: parsedMessage.input,
+				});
+				this.transactionPool.setTransaction(newlyCreatedTransaction);
 				break;
 			default:
 				return;

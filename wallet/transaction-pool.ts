@@ -13,6 +13,12 @@ class TransactionPool {
 
 	setTransaction(transaction: Transaction): void {
 		console.log("adding transaction: ", transaction);
+		// if (transaction.id === undefined) {
+		// 	console.error("transaction must have an id");
+		// 	console.log("transaction: ", transaction);
+		// 	return;
+		// }
+
 		this.transactionMap[transaction.id] = transaction;
 	}
 

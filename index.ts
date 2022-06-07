@@ -16,7 +16,7 @@ const main = async () => {
 	const pubsub = await PubSub.create({ blockchain, transactionPool });
 
 	const DEFAULT_PORT = 3000;
-	const ROOT_NODE_ADDRESS = `http://localhost:${DEFAULT_PORT}/api/blocks`;
+	const ROOT_NODE_ADDRESS = `http://localhost:${DEFAULT_PORT}`;
 
 	app.get("/api/blocks", (req, res) => {
 		res.json(blockchain.chain);
@@ -63,14 +63,18 @@ const main = async () => {
 		res.json(transactionPool.transactionMap);
 	});
 
-	const syncChains = async () => {
+	const syncWithRootState = async () => {
 		try {
-			const response = await axios.get(ROOT_NODE_ADDRESS);
-			if (response.status === 200) {
-				console.log("replace chain on a sync with: ", response.data);
-				blockchain.replaceChain(response.data);
-			} else {
-				console.log("not inside");
+			const blocksResponse = await axios.get(`${ROOT_NODE_ADDRESS}/api/blocks`);
+			if (blocksResponse.status === 200) {
+				console.log("replace chain on a sync with: ", blocksResponse.data);
+				blockchain.replaceChain(blocksResponse.data);
+			}
+			const transactionPoolMapResponse = await axios.get(
+				`${ROOT_NODE_ADDRESS}/api/transaction-pool-map`
+			);
+			if (transactionPoolMapResponse.status === 200) {
+				transactionPool.setMap(transactionPoolMapResponse.data);
 			}
 		} catch (err) {
 			console.error("Error syncing the chain: ", err);
@@ -86,7 +90,7 @@ const main = async () => {
 	const PORT = PEER_PORT || DEFAULT_PORT;
 	app.listen(PORT, () => console.log(`Listening at localhost: ${PORT}`));
 	if (PORT !== DEFAULT_PORT) {
-		await syncChains();
+		await syncWithRootState();
 	}
 };
 

@@ -1,5 +1,7 @@
 import { RedisClientType } from "@redis/client";
 import { createClient } from "redis";
+import { plainToInstance } from "class-transformer";
+
 import Blockchain from "../blockchain";
 import Transaction from "../wallet/transaction";
 import TransactionPool from "../wallet/transaction-pool";
@@ -53,14 +55,22 @@ class PubSub {
 
 	handleMessage(message: string, channel: string): void {
 		console.log(`Message received. Channel: ${channel}. Message: ${message}`);
-		const parsedMessage = JSON.parse(message);
 
 		switch (channel) {
 			case CHANNELS.BLOCKCHAIN:
+				const parsedMessage = JSON.parse(message);
 				this.blockchain.replaceChain(parsedMessage);
 				break;
 			case CHANNELS.TRANSACTION:
-				this.transactionPool.setTransaction(parsedMessage);
+				const parsedTransaction = plainToInstance(
+					Transaction,
+					JSON.parse(message)
+				);
+				console.log("parsed Transaction: ", parsedTransaction);
+				this.transactionPool.setTransaction(parsedTransaction[0]);
+				// const transaction = plainToInstance(Transaction, message);
+				// console.log("recieved transaction object: ", transaction);
+				// this.transactionPool.setTransaction(transaction);
 				break;
 			default:
 				return;

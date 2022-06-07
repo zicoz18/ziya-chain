@@ -30,6 +30,12 @@ class TransactionPool {
 			(transaction: Transaction) => transaction.input.address === inputAddress
 		);
 	}
+
+	validTransactions(): Transaction[] {
+		return Object.values(this.transactionMap).filter(
+			(transaction: Transaction) => Transaction.validTransaction(transaction)
+		);
+	}
 }
 
 export default TransactionPool;

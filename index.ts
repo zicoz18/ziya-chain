@@ -37,17 +37,9 @@ const main = async () => {
 		let transaction = transactionPool.existingTransaction({
 			inputAddress: wallet.publicKey,
 		});
-		console.log("found transaction: ", transaction);
 
 		try {
 			if (transaction) {
-				console.log("type of transaction: ", typeof transaction);
-				console.log(
-					"instance of transaction? ",
-					transaction instanceof Transaction
-				);
-
-				// Returned value is not Transaction it is an Object which causes error
 				transaction.update({
 					senderWallet: wallet,
 					recipient,
@@ -92,7 +84,7 @@ const main = async () => {
 	}
 
 	const PORT = PEER_PORT || DEFAULT_PORT;
-	app.listen(PORT, () => console.log(`Listening at localhost:${PORT}`));
+	app.listen(PORT, () => console.log(`Listening at localhost: ${PORT}`));
 	if (PORT !== DEFAULT_PORT) {
 		await syncChains();
 	}

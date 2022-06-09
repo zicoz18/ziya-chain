@@ -44,7 +44,7 @@ class Blockchain {
 		return true;
 	}
 
-	replaceChain(chain: Block[]): void | boolean {
+	replaceChain(chain: Block[], onSuccess?: () => void): void | boolean {
 		if (chain.length <= this.chain.length) {
 			console.error("The incoming chain must be longer");
 			return false;
@@ -54,6 +54,8 @@ class Blockchain {
 			console.error("The incoming chain must be valid");
 			return false;
 		}
+
+		if (onSuccess) onSuccess();
 
 		console.log("replacing chain with: ", chain);
 		this.chain = chain;

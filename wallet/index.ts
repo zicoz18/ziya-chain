@@ -7,6 +7,7 @@ import Transaction from "./transaction";
 interface CreateTransactionAttributes {
 	amount: number;
 	recipient: string;
+	chain?: Block[];
 }
 class Wallet {
 	public balance: number;
@@ -26,7 +27,15 @@ class Wallet {
 	createTransaction({
 		amount,
 		recipient,
+		chain,
 	}: CreateTransactionAttributes): Transaction {
+		if (chain) {
+			this.balance = Wallet.calculateBalance({
+				chain,
+				address: this.publicKey,
+			});
+		}
+
 		if (amount > this.balance) {
 			throw new Error("Amount exceeds balance");
 		}
@@ -41,19 +50,32 @@ class Wallet {
 		chain: Block[];
 		address: string;
 	}): number {
+		let hasConductedTransaction = false;
 		let outputsTotal = 0;
 
-		for (let i = 1; i < chain.length; i++) {
+		for (let i = chain.length - 1; i > 0; i--) {
 			const block = chain[i];
+
 			for (let transaction of block.data) {
+				if (transaction.input.address === address) {
+					hasConductedTransaction = true;
+				}
+
 				const addressOutput = transaction.outputMap[address];
+
 				if (addressOutput) {
 					outputsTotal += addressOutput;
 				}
 			}
+
+			if (hasConductedTransaction) {
+				break;
+			}
 		}
 
-		return STARTING_BALANCE + outputsTotal;
+		return hasConductedTransaction
+			? outputsTotal
+			: STARTING_BALANCE + outputsTotal;
 	}
 }
 

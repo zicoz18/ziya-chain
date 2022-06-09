@@ -3,13 +3,20 @@ import Block from "../../blockchain/block";
 import { cryptoHash } from "../../utils/";
 import Wallet from "../../wallet";
 import Transaction from "../../wallet/transaction";
+import { ec as EC } from "elliptic";
 
 describe("Blockchain", () => {
-	let blockchain: Blockchain, newChain: Blockchain, originalChain: Block[];
+	let blockchain: Blockchain,
+		newChain: Blockchain,
+		originalChain: Block[],
+		errorMock: any;
 
 	beforeEach(() => {
 		blockchain = new Blockchain();
 		newChain = new Blockchain();
+
+		errorMock = jest.fn();
+		global.console.error = errorMock;
 
 		originalChain = blockchain.chain;
 	});
@@ -98,13 +105,11 @@ describe("Blockchain", () => {
 	});
 
 	describe("replaceChain()", () => {
-		let errorMock: any, logMock: any;
+		let logMock: any;
 
 		beforeEach(() => {
-			errorMock = jest.fn();
 			logMock = jest.fn();
 
-			global.console.error = errorMock;
 			global.console.log = logMock;
 		});
 
@@ -191,57 +196,83 @@ describe("Blockchain", () => {
 				expect(blockchain.validTransactionData({ chain: newChain.chain })).toBe(
 					true
 				);
+				expect(errorMock).not.toHaveBeenCalled();
 			});
 		});
 
 		describe("and the transaction data has multiple rewards", () => {
-			it("returns false", () => {
+			it("returns false and logs an error", () => {
 				newChain.addBlock({
 					data: [transaction, rewardTransaction, rewardTransaction],
 				});
 				expect(blockchain.validTransactionData({ chain: newChain.chain })).toBe(
 					false
 				);
+				expect(errorMock).toHaveBeenCalled();
 			});
 		});
 
 		describe("and the transaction data has at least one malformed outputMap", () => {
 			describe("and the transaction is not a reward transaction", () => {
-				it("returns false", () => {
+				it("returns false and logs an error", () => {
 					transaction.outputMap[wallet.publicKey] = 999999;
 					newChain.addBlock({ data: [transaction, rewardTransaction] });
 					expect(
 						blockchain.validTransactionData({ chain: newChain.chain })
 					).toBe(false);
+					expect(errorMock).toHaveBeenCalled();
 				});
 			});
 			describe("and the transaction is a reward transaction", () => {
-				it("returns false", () => {
+				it("returns false and logs an error", () => {
 					rewardTransaction.outputMap[wallet.publicKey] = 999999;
 					newChain.addBlock({ data: [transaction, rewardTransaction] });
 					expect(
 						blockchain.validTransactionData({ chain: newChain.chain })
 					).toBe(false);
+					expect(errorMock).toHaveBeenCalled();
 				});
 			});
 		});
 
 		describe("and the transaction data has at least one malformed input", () => {
-			it("returns false", () => {
-				newChain.addBlock({ data: [transaction, rewardTransaction] });
-				transaction.input.amount = 99999;
+			it("returns false and logs an error", () => {
+				wallet.balance = 9000;
+				const evilOutpuMap = {
+					[wallet.publicKey]: 8900,
+					fooRecipient: 100,
+				};
+
+				const evilTransaction = new Transaction({
+					id: "123",
+					input: {
+						timestamp: Date.now(),
+						amount: wallet.balance,
+						address: wallet.publicKey,
+						signature: <EC.Signature>wallet.sign(evilOutpuMap),
+					},
+					outputMap: evilOutpuMap,
+				});
+
+				newChain.addBlock({ data: [evilTransaction, rewardTransaction] });
+
 				expect(blockchain.validTransactionData({ chain: newChain.chain })).toBe(
 					false
 				);
+				expect(errorMock).toHaveBeenCalled();
 			});
 		});
 
 		describe("and a block contains multiple identical transactions", () => {
-			it("returns false", () => {
-				newChain.addBlock({ data: [transaction, transaction, transaction] });
+			it("returns false and logs an error", () => {
+				newChain.addBlock({
+					data: [transaction, transaction, transaction, rewardTransaction],
+				});
+
 				expect(blockchain.validTransactionData({ chain: newChain.chain })).toBe(
 					false
 				);
+				expect(errorMock).toHaveBeenCalled();
 			});
 		});
 	});

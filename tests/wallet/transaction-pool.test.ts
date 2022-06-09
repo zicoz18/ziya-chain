@@ -1,6 +1,7 @@
 import TransactionPool from "../../wallet/transaction-pool";
 import Transaction from "../../wallet/transaction";
 import Wallet from "../../wallet";
+import Blockchain from "../../blockchain";
 
 describe("TransactionPool", () => {
 	let transactionPool: TransactionPool,
@@ -79,6 +80,38 @@ describe("TransactionPool", () => {
 			transactionPool.validTransactions();
 
 			expect(errorMock).toHaveBeenCalled();
+		});
+	});
+
+	describe("clear()", () => {
+		it("clears the transactions", () => {
+			transactionPool.clear();
+
+			expect(transactionPool.transactionMap).toEqual({});
+		});
+	});
+
+	describe("clearBlockchainTransactions()", () => {
+		it("clears the pool of any existing blockchain transactions", () => {
+			const blockchain = new Blockchain();
+			const expectedTransactionMap: any = {};
+			for (let i = 0; i < 6; i++) {
+				const transaction = new Wallet().createTransaction({
+					recipient: "foo-recipient",
+					amount: 20,
+				});
+
+				transactionPool.setTransaction(transaction);
+
+				if (i % 2 === 0) {
+					blockchain.addBlock({ data: [transaction] });
+				} else {
+					expectedTransactionMap[transaction.id] = transaction;
+				}
+			}
+
+			transactionPool.clearBlockchainTransactions({ chain: blockchain.chain });
+			expect(transactionPool.transactionMap).toEqual(expectedTransactionMap);
 		});
 	});
 });

@@ -52,7 +52,11 @@ const main = async () => {
 					amount,
 				});
 			} else {
-				transaction = wallet.createTransaction({ amount, recipient });
+				transaction = wallet.createTransaction({
+					amount,
+					recipient,
+					chain: blockchain.chain,
+				});
 			}
 		} catch (error: any) {
 			return res.status(400).json({ type: "error", message: error.message });

@@ -78,6 +78,17 @@ const main = async () => {
 		res.redirect("/api/blocks");
 	});
 
+	app.get("/api/wallet-info", (req, res) => {
+		const address = wallet.publicKey;
+		res.json({
+			address,
+			balance: Wallet.calculateBalance({
+				chain: blockchain.chain,
+				address,
+			}),
+		});
+	});
+
 	const syncWithRootState = async () => {
 		try {
 			const blocksResponse = await axios.get(`${ROOT_NODE_ADDRESS}/api/blocks`);

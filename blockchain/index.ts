@@ -91,15 +91,24 @@ class Blockchain {
 		return true;
 	}
 
-	replaceChain(chain: Block[], onSuccess?: () => void): void | boolean {
+	replaceChain(
+		chain: Block[],
+		validateTransactions?: boolean,
+		onSuccess?: () => void
+	): void | boolean {
 		if (chain.length <= this.chain.length) {
 			console.error("The incoming chain must be longer");
-			return false;
+			return;
 		}
 
 		if (!Blockchain.isValidChain(chain)) {
 			console.error("The incoming chain must be valid");
-			return false;
+			return;
+		}
+
+		if (validateTransactions && !this.validTransactionData({ chain })) {
+			console.error("The incoming chain has invalid data");
+			return;
 		}
 
 		if (onSuccess) onSuccess();

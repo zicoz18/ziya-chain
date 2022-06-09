@@ -1,3 +1,4 @@
+import Block from "../blockchain/block";
 import Transaction from "./transaction";
 
 interface TransactionMap {
@@ -8,6 +9,10 @@ class TransactionPool {
 	public transactionMap: TransactionMap;
 
 	constructor() {
+		this.transactionMap = {};
+	}
+
+	clear(): void {
 		this.transactionMap = {};
 	}
 
@@ -25,7 +30,6 @@ class TransactionPool {
 		inputAddress: string;
 	}): Transaction | undefined {
 		const transactions: Transaction[] = Object.values(this.transactionMap);
-		console.log("existingTransaction: ", transactions);
 		return transactions.find(
 			(transaction: Transaction) => transaction.input.address === inputAddress
 		);
@@ -35,6 +39,17 @@ class TransactionPool {
 		return Object.values(this.transactionMap).filter(
 			(transaction: Transaction) => Transaction.validTransaction(transaction)
 		);
+	}
+
+	clearBlockchainTransactions({ chain }: { chain: Block[] }) {
+		for (let i = 1; i < chain.length; i++) {
+			const block = chain[i];
+			for (let transaction of block.data) {
+				if (this.transactionMap[transaction.id]) {
+					delete this.transactionMap[transaction.id];
+				}
+			}
+		}
 	}
 }
 

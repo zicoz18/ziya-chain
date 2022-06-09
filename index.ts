@@ -5,7 +5,7 @@ import Blockchain from "./blockchain";
 import PubSub from "./app/pubsub";
 import TransactionPool from "./wallet/transaction-pool";
 import Wallet from "./wallet";
-import Transaction from "./wallet/transaction";
+import TransactionMiner from "./app/transaction-miner";
 
 const main = async () => {
 	const app = express();
@@ -14,6 +14,12 @@ const main = async () => {
 	const transactionPool = new TransactionPool();
 	const wallet = new Wallet();
 	const pubsub = await PubSub.create({ blockchain, transactionPool });
+	const transactionMiner = new TransactionMiner({
+		blockchain,
+		transactionPool,
+		wallet,
+		pubsub,
+	});
 
 	const DEFAULT_PORT = 3000;
 	const ROOT_NODE_ADDRESS = `http://localhost:${DEFAULT_PORT}`;
@@ -61,6 +67,11 @@ const main = async () => {
 
 	app.get("/api/transaction-pool-map", (req, res) => {
 		res.json(transactionPool.transactionMap);
+	});
+
+	app.get("/api/mine-transactions", (req, res) => {
+		transactionMiner.mineTransactions();
+		res.redirect("/api/blocks");
 	});
 
 	const syncWithRootState = async () => {

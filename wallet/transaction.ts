@@ -2,6 +2,7 @@ import { v1 as uuid } from "uuid";
 import { ec as EC } from "elliptic";
 import Wallet from ".";
 import { verifySignature } from "../utils";
+import { MINING_REWARD, REWARD_INPUT } from "../config";
 
 interface ConstructorParamsWithSenderWallet {
 	senderWallet: Wallet;
@@ -27,7 +28,7 @@ interface CreateInputAttributes {
 	outputMap: OutputMap;
 }
 
-interface Input {
+export interface Input {
 	timestamp: number;
 	amount: number;
 	address: string;
@@ -49,19 +50,23 @@ class Transaction {
 	}: Partial<ConstructorParams>) {
 		if (senderWallet && recipient && amount) {
 			this.id = uuid();
-			this.outputMap = this.createOutputMap({
-				senderWallet,
-				recipient,
-				amount,
-			});
-			this.input = this.createInput({
-				senderWallet,
-				outputMap: this.outputMap,
-			});
+			this.outputMap =
+				outputMap ||
+				this.createOutputMap({
+					senderWallet,
+					recipient,
+					amount,
+				});
+			this.input =
+				input ||
+				this.createInput({
+					senderWallet,
+					outputMap: this.outputMap,
+				});
 		} else {
-			this.id = <string>id;
-			this.outputMap = outputMap ?? {};
-			this.input = <Input>input ?? {
+			this.id = <string>id || uuid();
+			this.outputMap = outputMap || {};
+			this.input = <Input>input || {
 				timestamp: 0,
 				amount: 0,
 				address: "",
@@ -133,6 +138,19 @@ class Transaction {
 		}
 
 		return true;
+	}
+
+	public static rewardTransaction({
+		minerWallet,
+	}: {
+		minerWallet: Wallet;
+	}): Transaction {
+		return new this({
+			input: REWARD_INPUT,
+			outputMap: {
+				[minerWallet.publicKey]: MINING_REWARD,
+			},
+		});
 	}
 }
 

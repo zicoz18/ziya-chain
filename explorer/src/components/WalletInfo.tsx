@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import ENDPOINTS from "../constants/Endpoints";
 import Blocks from "./Blocks";
-import { WalletInfo } from "../interfaces";
+import { IWalletInfo } from "../interfaces";
+const Logo = require("../assets/logo.png");
 
-const App = () => {
-	const [walletInfo, setWalletInfo] = useState<WalletInfo>({
+const WalletInfo = () => {
+	const [walletInfo, setWalletInfo] = useState<IWalletInfo>({
 		address: "0",
 		balance: -1,
 	});
@@ -22,13 +23,18 @@ const App = () => {
 
 	return (
 		<div className="App">
+			<img className="logo" src={Logo} alt="" />
+			<br />
 			<div>Welcome to Ziya Chain Explorer</div>
-			<div>Address: {walletInfo.address}</div>
-			<div>Balance: {walletInfo.balance}</div>
+			<br />
+			<div className="WalletInfo">
+				<div>Address: {walletInfo.address}</div>
+				<div>Balance: {walletInfo.balance}</div>
+			</div>
 			<br />
 			<Blocks />
 		</div>
 	);
 };
 
-export default App;
+export default WalletInfo;

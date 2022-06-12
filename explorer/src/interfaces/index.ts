@@ -1,4 +1,5 @@
-import { Block } from "./Block";
-import { WalletInfo } from "./WalletInfo";
+import { IBlock } from "./Block";
+import { IWalletInfo } from "./WalletInfo";
+import { IBlockProps } from "./BlockProps";
 
-export type { Block, WalletInfo };
+export type { IBlock, IWalletInfo, IBlockProps };

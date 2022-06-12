@@ -1,6 +1,6 @@
-interface WalletInfo {
+interface IWalletInfo {
 	address: string;
 	balance: number;
 }
 
-export type { WalletInfo };
+export type { IWalletInfo };

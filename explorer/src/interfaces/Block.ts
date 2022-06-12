@@ -1,4 +1,4 @@
-interface Block {
+interface IBlock {
 	hash: string;
 	previousHash: string;
 	timestamp: number;
@@ -7,4 +7,4 @@ interface Block {
 	data: any[];
 }
 
-export type { Block };
+export type { IBlock };

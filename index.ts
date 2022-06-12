@@ -1,3 +1,4 @@
+import path from "path";
 import express from "express";
 import bodyParser from "body-parser";
 import axios from "axios";
@@ -10,6 +11,7 @@ import TransactionMiner from "./app/transaction-miner";
 const main = async () => {
 	const app = express();
 	app.use(bodyParser.json());
+	app.use(express.static(path.join(__dirname, "./client")));
 	const blockchain = new Blockchain();
 	const transactionPool = new TransactionPool();
 	const wallet = new Wallet();
@@ -87,6 +89,10 @@ const main = async () => {
 				address,
 			}),
 		});
+	});
+
+	app.get("*", (req, res) => {
+		res.sendFile(path.join(__dirname, "./client/index.html"));
 	});
 
 	const syncWithRootState = async () => {

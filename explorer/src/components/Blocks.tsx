@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import ENDPOINTS from "../constants/Endpoints";
 import { IBlock } from "../interfaces";
 import Block from "./Block";
@@ -18,13 +19,12 @@ const Blocks = () => {
 
 	return (
 		<div>
+			<div>
+				<Link to="/">Home</Link>
+			</div>
 			<h3>Blocks</h3>
 			{blocks.map((block, index) => (
-				<Block
-					timestamp={block.timestamp}
-					hash={block.hash}
-					data={block.data}
-				/>
+				<Block block={block} />
 			))}
 		</div>
 	);

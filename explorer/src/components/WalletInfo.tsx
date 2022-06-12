@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import ENDPOINTS from "../constants/Endpoints";
-import Blocks from "./Blocks";
 import { IWalletInfo } from "../interfaces";
+import { Link } from "react-router-dom";
 const Logo = require("../assets/logo.png");
 
 const WalletInfo = () => {
@@ -27,12 +27,12 @@ const WalletInfo = () => {
 			<br />
 			<div>Welcome to Ziya Chain Explorer</div>
 			<br />
+			<Link to="/blocks">Blocks</Link>
+			<br />
 			<div className="WalletInfo">
 				<div>Address: {walletInfo.address}</div>
 				<div>Balance: {walletInfo.balance}</div>
 			</div>
-			<br />
-			<Blocks />
 		</div>
 	);
 };

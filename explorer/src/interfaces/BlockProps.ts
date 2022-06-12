@@ -1,7 +1,9 @@
 interface IBlockProps {
-	hash: string;
-	timestamp: number;
-	data: any[];
+	block: {
+		hash: string;
+		timestamp: number;
+		data: any[];
+	};
 }
 
 export type { IBlockProps };

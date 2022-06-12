@@ -10,7 +10,8 @@
 		"start-redis": "redis-server --daemonize yes",
 		"pubsub": "ts-node pubsub.ts",
 		"build": "tsc",
-		"test": "jest --watchAll"
+		"test": "jest --watchAll",
+		"explorer": "cd ./explorer && npm start"
 	},
 	"repository": {
 		"type": "git",

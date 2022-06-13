@@ -1,7 +1,6 @@
 import path from "path";
 import express from "express";
 import bodyParser from "body-parser";
-import cors from "cors";
 import axios from "axios";
 
 import Blockchain from "./blockchain";
@@ -15,7 +14,6 @@ let INUSE_PORT;
 const main = async () => {
 	const app = express();
 	app.use(bodyParser.json());
-	app.use(cors({ origin: true }));
 	app.use(express.static(path.join(__dirname, "./explorer/build")));
 
 	const DEFAULT_PORT = 3000;

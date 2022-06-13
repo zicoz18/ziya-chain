@@ -1,3 +1,4 @@
+import path from "path";
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
@@ -9,10 +10,13 @@ import TransactionPool from "./wallet/transaction-pool";
 import Wallet from "./wallet";
 import TransactionMiner from "./app/transaction-miner";
 
+let INUSE_PORT;
+
 const main = async () => {
 	const app = express();
 	app.use(bodyParser.json());
 	app.use(cors({ origin: true }));
+	app.use(express.static(path.join(__dirname, "./explorer/build")));
 	const blockchain = new Blockchain();
 	const transactionPool = new TransactionPool();
 	const wallet = new Wallet();
@@ -24,7 +28,7 @@ const main = async () => {
 		pubsub,
 	});
 
-	const DEFAULT_PORT = 8080;
+	const DEFAULT_PORT = 3000;
 	const ROOT_NODE_ADDRESS = `http://localhost:${DEFAULT_PORT}`;
 
 	app.get("/api/blocks", (req, res) => {
@@ -90,6 +94,10 @@ const main = async () => {
 				address,
 			}),
 		});
+	});
+
+	app.get("*", (req, res) => {
+		res.sendFile(path.resolve(__dirname, "./explorer/build", "index.html"));
 	});
 
 	const syncWithRootState = async () => {
@@ -168,6 +176,7 @@ const main = async () => {
 	}
 
 	const PORT = PEER_PORT || DEFAULT_PORT;
+	INUSE_PORT = PORT;
 	app.listen(PORT, () => console.log(`Listening at localhost: ${PORT}`));
 	if (PORT !== DEFAULT_PORT) {
 		await syncWithRootState();
@@ -175,3 +184,5 @@ const main = async () => {
 };
 
 main();
+
+export { INUSE_PORT };

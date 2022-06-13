@@ -1,0 +1,2 @@
+const POOL_INTERVAL_MS = 10000;
+export default POOL_INTERVAL_MS;

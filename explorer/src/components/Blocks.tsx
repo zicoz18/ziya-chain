@@ -24,7 +24,7 @@ const Blocks = () => {
 			</div>
 			<h3>Blocks</h3>
 			{blocks.map((block, index) => (
-				<Block block={block} />
+				<Block key={block.hash} block={block} />
 			))}
 		</div>
 	);

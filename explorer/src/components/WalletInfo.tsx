@@ -28,6 +28,8 @@ const WalletInfo = () => {
 			<div>Welcome to Ziya Chain Explorer</div>
 			<br />
 			<Link to="/blocks">Blocks</Link>
+			<Link to="/conduct-transaction">Conduct a Transaction</Link>
+			<Link to="/transaction-pool">Transaction Pool</Link>
 			<br />
 			<div className="WalletInfo">
 				<div>Address: {walletInfo.address}</div>

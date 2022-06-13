@@ -1,6 +1,5 @@
 import { RedisClientType } from "@redis/client";
 import { createClient } from "redis";
-import { plainToInstance } from "class-transformer";
 
 import Blockchain from "../blockchain";
 import Transaction from "../wallet/transaction";
@@ -50,13 +49,12 @@ class PubSub {
 		this.transactionPool = transactionPool;
 		this.publisher = createClient({ url: redisUrl });
 		this.subscriber = createClient({ url: redisUrl });
-
-		this.subscribeToChannels();
 	}
 
 	async connect(): Promise<void> {
 		await this.publisher.connect();
 		await this.subscriber.connect();
+		this.subscribeToChannels();
 	}
 
 	handleMessage(message: string, channel: string): void {

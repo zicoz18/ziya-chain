@@ -9,6 +9,7 @@ import TransactionPool from "../wallet/transaction-pool";
 interface CreatePubSubAttributes {
 	blockchain: Blockchain;
 	transactionPool: TransactionPool;
+	redisUrl: string;
 }
 interface PublishAttributes {
 	channel: string;
@@ -33,17 +34,22 @@ class PubSub {
 	public static async create({
 		blockchain,
 		transactionPool,
+		redisUrl,
 	}: CreatePubSubAttributes): Promise<PubSub> {
-		const pubSub = new PubSub({ blockchain, transactionPool });
+		const pubSub = new PubSub({ blockchain, transactionPool, redisUrl });
 		await pubSub.connect();
 		return pubSub;
 	}
 
-	constructor({ blockchain, transactionPool }: CreatePubSubAttributes) {
+	constructor({
+		blockchain,
+		transactionPool,
+		redisUrl,
+	}: CreatePubSubAttributes) {
 		this.blockchain = blockchain;
 		this.transactionPool = transactionPool;
-		this.publisher = createClient();
-		this.subscriber = createClient();
+		this.publisher = createClient({ url: redisUrl });
+		this.subscriber = createClient({ url: redisUrl });
 
 		this.subscribeToChannels();
 	}

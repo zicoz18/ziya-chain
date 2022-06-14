@@ -205,7 +205,6 @@ const main = async () => {
 
 	// 	transactionMiner.mineTransactions();
 	// }
-
 	// // Create fake data END
 
 	let PEER_PORT;

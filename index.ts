@@ -40,6 +40,25 @@ const main = async () => {
 		res.json(blockchain.chain);
 	});
 
+	app.get("/api/blocks/length", (req, res) => {
+		res.json(blockchain.chain.length);
+	});
+
+	app.get("/api/blocks/:id", (req, res) => {
+		const { id } = req.params;
+		const { length } = blockchain.chain;
+
+		const blocksReserved = blockchain.chain.slice().reverse();
+
+		let startIndex = (parseInt(id) - 1) * 5;
+		let endIndex = parseInt(id) * 5;
+
+		startIndex = startIndex < length ? startIndex : length;
+		endIndex = endIndex < length ? endIndex : length;
+
+		res.json(blocksReserved.slice(startIndex, endIndex));
+	});
+
 	app.post("/api/mine", (req, res) => {
 		const { data } = req.body;
 
@@ -138,56 +157,56 @@ const main = async () => {
 		}
 	};
 
-	// // Create fake data START
-	// const walletFoo = new Wallet();
-	// const walletBar = new Wallet();
+	// Create fake data START
+	const walletFoo = new Wallet();
+	const walletBar = new Wallet();
 
-	// const generateWalletTransaction = ({ wallet, amount, recipient }: any) => {
-	// 	const transaction = wallet.createTransaction({
-	// 		recipient,
-	// 		amount,
-	// 		chain: blockchain.chain,
-	// 	});
-	// 	transactionPool.setTransaction(transaction);
-	// };
+	const generateWalletTransaction = ({ wallet, amount, recipient }: any) => {
+		const transaction = wallet.createTransaction({
+			recipient,
+			amount,
+			chain: blockchain.chain,
+		});
+		transactionPool.setTransaction(transaction);
+	};
 
-	// const walletAction = () =>
-	// 	generateWalletTransaction({
-	// 		wallet: wallet,
-	// 		recipient: walletFoo.publicKey,
-	// 		amount: 5,
-	// 	});
+	const walletAction = () =>
+		generateWalletTransaction({
+			wallet: wallet,
+			recipient: walletFoo.publicKey,
+			amount: 5,
+		});
 
-	// const walletFooAction = () =>
-	// 	generateWalletTransaction({
-	// 		wallet: walletFoo,
-	// 		recipient: walletBar.publicKey,
-	// 		amount: 10,
-	// 	});
+	const walletFooAction = () =>
+		generateWalletTransaction({
+			wallet: walletFoo,
+			recipient: walletBar.publicKey,
+			amount: 10,
+		});
 
-	// const walletBarAction = () =>
-	// 	generateWalletTransaction({
-	// 		wallet: walletBar,
-	// 		recipient: wallet.publicKey,
-	// 		amount: 15,
-	// 	});
+	const walletBarAction = () =>
+		generateWalletTransaction({
+			wallet: walletBar,
+			recipient: wallet.publicKey,
+			amount: 15,
+		});
 
-	// for (let i = 0; i < 10; i++) {
-	// 	if (i % 3 === 0) {
-	// 		walletAction();
-	// 		walletFooAction();
-	// 	} else if (i % 3 === 1) {
-	// 		walletAction();
-	// 		walletBarAction();
-	// 	} else {
-	// 		walletFooAction();
-	// 		walletBarAction();
-	// 	}
+	for (let i = 0; i < 20; i++) {
+		if (i % 3 === 0) {
+			walletAction();
+			walletFooAction();
+		} else if (i % 3 === 1) {
+			walletAction();
+			walletBarAction();
+		} else {
+			walletFooAction();
+			walletBarAction();
+		}
 
-	// 	transactionMiner.mineTransactions();
-	// }
+		transactionMiner.mineTransactions();
+	}
 
-	// // Create fake data END
+	// Create fake data END
 
 	let PEER_PORT;
 

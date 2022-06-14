@@ -17,7 +17,7 @@ const main = async () => {
 	app.use(express.static(path.join(__dirname, "./explorer/build")));
 
 	const DEFAULT_PORT = 3000;
-	const ROOT_NODE_ADDRESS = `http://localhost:${DEFAULT_PORT}`;
+	const ROOT_NODE_ADDRESS = "https://infinite-sands-72135.herokuapp.com";
 	const REDIS_URL =
 		"redis://:p59dfa871b8ea249a39c78aacd45bd83be21563298e37f9e055ea0dd4b3fa7fc9@ec2-67-202-60-186.compute-1.amazonaws.com:14839";
 

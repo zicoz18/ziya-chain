@@ -17,7 +17,7 @@ const main = async () => {
 	app.use(express.static(path.join(__dirname, "./explorer/build")));
 
 	const DEFAULT_PORT = 3000;
-	const ROOT_NODE_ADDRESS = "https://infinite-sands-72135.herokuapp.com";
+	const ROOT_NODE_ADDRESS = `http://localhost:${DEFAULT_PORT}`;
 	const REDIS_URL =
 		"redis://:p59dfa871b8ea249a39c78aacd45bd83be21563298e37f9e055ea0dd4b3fa7fc9@ec2-67-202-60-186.compute-1.amazonaws.com:14839";
 
@@ -157,56 +157,56 @@ const main = async () => {
 		}
 	};
 
-	// Create fake data START
-	const walletFoo = new Wallet();
-	const walletBar = new Wallet();
+	// // Create fake data START
+	// const walletFoo = new Wallet();
+	// const walletBar = new Wallet();
 
-	const generateWalletTransaction = ({ wallet, amount, recipient }: any) => {
-		const transaction = wallet.createTransaction({
-			recipient,
-			amount,
-			chain: blockchain.chain,
-		});
-		transactionPool.setTransaction(transaction);
-	};
+	// const generateWalletTransaction = ({ wallet, amount, recipient }: any) => {
+	// 	const transaction = wallet.createTransaction({
+	// 		recipient,
+	// 		amount,
+	// 		chain: blockchain.chain,
+	// 	});
+	// 	transactionPool.setTransaction(transaction);
+	// };
 
-	const walletAction = () =>
-		generateWalletTransaction({
-			wallet: wallet,
-			recipient: walletFoo.publicKey,
-			amount: 5,
-		});
+	// const walletAction = () =>
+	// 	generateWalletTransaction({
+	// 		wallet: wallet,
+	// 		recipient: walletFoo.publicKey,
+	// 		amount: 5,
+	// 	});
 
-	const walletFooAction = () =>
-		generateWalletTransaction({
-			wallet: walletFoo,
-			recipient: walletBar.publicKey,
-			amount: 10,
-		});
+	// const walletFooAction = () =>
+	// 	generateWalletTransaction({
+	// 		wallet: walletFoo,
+	// 		recipient: walletBar.publicKey,
+	// 		amount: 10,
+	// 	});
 
-	const walletBarAction = () =>
-		generateWalletTransaction({
-			wallet: walletBar,
-			recipient: wallet.publicKey,
-			amount: 15,
-		});
+	// const walletBarAction = () =>
+	// 	generateWalletTransaction({
+	// 		wallet: walletBar,
+	// 		recipient: wallet.publicKey,
+	// 		amount: 15,
+	// 	});
 
-	for (let i = 0; i < 20; i++) {
-		if (i % 3 === 0) {
-			walletAction();
-			walletFooAction();
-		} else if (i % 3 === 1) {
-			walletAction();
-			walletBarAction();
-		} else {
-			walletFooAction();
-			walletBarAction();
-		}
+	// for (let i = 0; i < 20; i++) {
+	// 	if (i % 3 === 0) {
+	// 		walletAction();
+	// 		walletFooAction();
+	// 	} else if (i % 3 === 1) {
+	// 		walletAction();
+	// 		walletBarAction();
+	// 	} else {
+	// 		walletFooAction();
+	// 		walletBarAction();
+	// 	}
 
-		transactionMiner.mineTransactions();
-	}
+	// 	transactionMiner.mineTransactions();
+	// }
 
-	// Create fake data END
+	// // Create fake data END
 
 	let PEER_PORT;
 
